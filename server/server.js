@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const jwt = require('./services/jwt');
 const User = require('./models/User');
 
+const SECRET = 'shhh..';
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -28,10 +30,10 @@ app.post('/register', (req, res) => {
 
   const payload = {
     iss: req.hostname, // issuer
-    sub: user._id      // subject
+    sub: newUser.id       // subject
   };
 
-  const token = jwt.encode(payload, 'shhh..');
+  const token = jwt.encode(payload, SECRET);
 
   newUser.save((err) => {
     if (err) { throw err };
@@ -43,6 +45,38 @@ app.post('/register', (req, res) => {
     });
   });
 });
+
+// ------------------------------------------------
+
+const jobs = [
+  'Cook',
+  'SuperHero',
+  'Unicorn Wisperer',
+  'Toast Inspector'
+];
+
+app.get('/jobs', (req, res) => {
+
+  if (!req.headers.authorization) {
+    return res.status(401).send({
+      message: 'You are not authorized'
+    });
+  }
+
+  const token = req.headers.authorization.split(' ')[1];
+  const payload = jwt.decode(token, SECRET);
+
+  if (!payload.sub) {
+    res.status(401).send({
+      message: 'Authentication failed'
+    });
+  }
+
+
+  res.json(jobs);
+});
+
+// ================================================
 
 mongoose.connect('mongodb://localhost/JWT');
 const db = mongoose.connection;

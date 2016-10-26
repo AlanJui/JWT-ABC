@@ -8,12 +8,15 @@
  * Controller of the jwtApp
  */
 angular.module('jwtApp')
-  .controller('JobsCtrl', function () {
+  .controller('JobsCtrl', function ($http, API_URL, alert) {
     var self = this;
 
-    self.jobs = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+    $http.get(API_URL + 'jobs')
+      .success(function (jobs) {
+        self.jobs = jobs;
+      })
+      .error(function (err) {
+        alert('warning', 'Unable to get jobs', err.message);
+      });
+
   });
