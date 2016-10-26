@@ -74,7 +74,7 @@
 
 ```
  [ProjectRoot] $ cd client
- [ProjectRoot/client] $ npm start
+ [ProjectRoot/client] $ grunt serve
 ```
 
 #### 瀏覽

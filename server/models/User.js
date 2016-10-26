@@ -6,6 +6,13 @@ const UserSchema = new mongoose.Schema({
   password: String
 });
 
+UserSchema.methods.toJSON = function () {
+  let user = this.toObject();
+  delete user.password;
+
+  return user;
+};
+
 const User = mongoose.model('User', UserSchema);
 
 
