@@ -59,7 +59,7 @@
 
 ## 開發環境操作
 
-以下說明本專案在進行開發時的基本操作
+以下說明本專案在進行開發時的基本操作。
 
 ### Cient 用戶端
 
@@ -67,7 +67,7 @@
 
 ```
  [ProjectRoot] $ cd client
- [ProjectRoot] $$ npm install
+ [ProjectRoot] $ npm install
 ```
 
 #### 啟動
@@ -89,7 +89,7 @@
 
 ```
  [ProjectRoot] $ cd server
- [ProjectRoot] $$ npm install
+ [ProjectRoot] $ npm install
 ```
 
 #### 啟動
