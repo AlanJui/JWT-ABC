@@ -8,7 +8,7 @@
  * Controller of the jwtApp
  */
 angular.module('jwtApp')
-  .controller('RegisterCtrl', function ($scope, $rootScope, $http, alert, authToken) {
+  .controller('RegisterCtrl', function ($scope, $rootScope, $http, alert, authToken, $state) {
 
     $scope.submit = function () {
       // console.log('RegisterCtrl');
@@ -22,8 +22,13 @@ angular.module('jwtApp')
       $http.post(url, user)
         .success(function (res) {
           // console.log('Good');
+          alert(
+            'success',
+            'Account Created!',
+            'Wlcome, ' + res.user.email + '!'
+          );
           authToken.setToken(res.token);
-          alert('success', 'OK!', 'You are now registered');
+          // $state.go('main');
         })
         .error(function (err) {
           // console.log('Bad');
