@@ -11,6 +11,13 @@ angular.module('jwtApp')
         templateUrl: '/views/main.html'
       })
 
+      .state('jobs', {
+        url: '/jobs',
+        templateUrl: '/views/jobs.html',
+        controller: 'JobsCtrl',
+        controllerAs: 'ctrl'
+      })
+
       .state('register', {
         url: '/register',
         templateUrl: '/views/register.html',
