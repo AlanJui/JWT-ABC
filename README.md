@@ -12,6 +12,7 @@
  - Client
  - Server (RESTful API)
 
+```
 .
 ├── README.md
 ├── client
@@ -53,6 +54,8 @@
     │   └── vary
     ├── package.json
     └── server.js
+```
+
 
 ## 開發環境操作
 
