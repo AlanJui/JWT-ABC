@@ -5,8 +5,6 @@ const mongoose = require('mongoose');
 const jwt = require('./services/jwt');
 const User = require('./models/User');
 
-const SECRET = 'shhh..';
-
 const app = express();
 
 app.use(bodyParser.json());
@@ -28,12 +26,9 @@ app.post('/register', (req, res) => {
     password: user.password
   });
 
-  const payload = {
-    iss: req.hostname, // issuer
-    sub: newUser.id       // subject
-  };
+  const payload = jwt.createPayload(req.hostname, newUser.id);
 
-  const token = jwt.encode(payload, SECRET);
+  const token = jwt.encode(payload);
 
   newUser.save((err) => {
     if (err) { throw err };
@@ -64,14 +59,11 @@ app.get('/jobs', (req, res) => {
   }
 
   const token = req.headers.authorization.split(' ')[1];
-  const payload = jwt.decode(token, SECRET);
-
-  if (!payload.sub) {
+  if (!jwt.isValid(token)) {
     res.status(401).send({
       message: 'Authentication failed'
     });
   }
-
 
   res.json(jobs);
 });

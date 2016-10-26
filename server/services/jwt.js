@@ -1,6 +1,16 @@
 const crypto = require('crypto');
 
-exports.encode = function (payload, secret) {
+const SECRET = 'shhh..';
+
+exports.createPayload = function (hostName, userID) {
+  return {
+    issuer: hostName,
+    subject: userID
+  };
+};
+
+// exports.encode = function (payload, secret) {
+exports.encode = function (payload) {
   const algorithm = 'HS256';
 
   const header = {
@@ -12,13 +22,14 @@ exports.encode = function (payload, secret) {
   // [Header].[Payload].[Signature]
   const headerPart = base64Encode(JSON.stringify(header));
   const payloadPart = base64Encode(JSON.stringify(payload));
-  const signaturePart = sign(`${headerPart}${payloadPart}`, secret);
+  const signaturePart = sign(`${headerPart}${payloadPart}`, SECRET);
   const jwt = `${headerPart}.${payloadPart}.${signaturePart}`;
 
   return jwt;
 };
 
-exports.decode = function (token, secret) {
+// exports.decode = function (token, secret) {
+exports.decode = function decode(token) {
   var segements = token.split('.');
 
   if (segements.length !== 3) {
@@ -29,12 +40,18 @@ exports.decode = function (token, secret) {
   let payload = JSON.parse(base64Decode(segements[1]));
   const rawSignature = `${segements[0]}${segements[1]}`;
 
-  let verified = verify(rawSignature, secret, segements[2]);
+  let verified = verify(rawSignature, SECRET, segements[2]);
   if (!verified) {
     throw new Error('Verification failed');
   }
 
   return payload;
+};
+
+exports.isValid = function (token) {
+  const payload = this.decode(token);
+
+  return payload.subject;
 };
 
 function base64Encode(str) {
