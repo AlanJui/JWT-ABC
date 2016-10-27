@@ -73,17 +73,9 @@ app.post('/register', (req, res) => {
 
 // ------------------------------------------------
 
-app.post('/login', (req, res, next) => {
-  passport.authenticate('local', function (err, user) {
-    if (err) { return next(err); }
-
-    req.login(user, function (err) {
-      if (err) { return next(err); }
-
-      const token = jwt.createToken(req.hostname, user);
-      res.status(200).send(token);
-    });
-  })(req, res, next);
+app.post('/login', passport.authenticate('local'), (req, res) => {
+  const token = jwt.createToken(req.hostname, req.user);
+  res.status(200).send(token);
 });
 
 // ------------------------------------------------
