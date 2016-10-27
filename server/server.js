@@ -1,23 +1,58 @@
-const SECRET = 'shhh...';
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const jwt = require('./services/jwtTools');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/User');
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(passport.initialize());
+
+passport.serializeUser(function (user, done) {
+  done(null, user.id);
+});
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
   next();
 });
 
+const strategy = new LocalStrategy(
+  {
+    usernameField: 'email'
+  },
+  function (email, password, done) {
+    User.findOne({ email: email }, (err, user) => {
+      if (err) { return done(err); }
+
+      if (!user) {
+        return done(null, false, {
+          message: 'Can not find this user'
+        });
+      }
+
+      user.comparePasswords(password, (err, isMatch) => {
+        if (err) { return done(err); }
+
+        if (!isMatch) {
+          return done(null, false, {
+            message: 'Wrong email/password'
+          });
+        }
+        return done(null, user);
+      });
+    });
+  }
+);
+
+passport.use(strategy);
 
 app.post('/register', (req, res) => {
   const user = req.body;
@@ -38,27 +73,17 @@ app.post('/register', (req, res) => {
 
 // ------------------------------------------------
 
-app.post('/login', (req, res) => {
-  const reqUser = req.body;
-  const password = reqUser.password;
+app.post('/login', (req, res, next) => {
+  passport.authenticate('local', function (err, user) {
+    if (err) { return next(err); }
 
-  User.findOne({ email: reqUser.email }, (err, user) => {
-    if (err) throw err;
+    req.login(user, function (err) {
+      if (err) { return next(err); }
 
-    if (!user) {
-      return res.status(401).send({ message: 'Can not find this user' });
-    }
-
-    user.comparePasswords(password, (err, isMatch) => {
-      if (err) throw err;
-
-      if (!isMatch) {
-        return res.status(401).send({ message: 'Wrong email/password' });
-      }
       const token = jwt.createToken(req.hostname, user);
       res.status(200).send(token);
     });
-  });
+  })(req, res, next);
 });
 
 // ------------------------------------------------
