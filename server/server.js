@@ -24,10 +24,26 @@ app.use((req, res, next) => {
   next();
 });
 
-const strategy = new LocalStrategy(
-  {
-    usernameField: 'email'
-  },
+const stragegyOptions = {
+  usernameField: 'email'
+};
+
+const registerStrategy = new LocalStrategy(stragegyOptions,
+  function (email, password, done) {
+    let newUser = new User({
+      email: email,
+      password: password
+    });
+
+    newUser.save((err) => {
+      if (err) { done(err); }
+
+      done(null, newUser);
+    });
+  }
+);
+
+const loginStrategy = new LocalStrategy(stragegyOptions,
   function (email, password, done) {
     User.findOne({ email: email }, (err, user) => {
       if (err) { return done(err); }
@@ -52,28 +68,18 @@ const strategy = new LocalStrategy(
   }
 );
 
-passport.use(strategy);
+passport.use('local-register', registerStrategy);
+passport.use('local-login', loginStrategy);
 
-app.post('/register', (req, res) => {
-  const user = req.body;
-
-  // let newUser = new User.model({
-  let newUser = new User({
-    email: user.email,
-    password: user.password
-  });
-
-  newUser.save((err) => {
-    if (err) { throw err };
-
-    const token = jwt.createToken(req.hostname, newUser);
-    res.status(200).send(token);
-  });
+app.post('/register', passport.authenticate('local-register'), (req, res) => {
+  // const user = req.body;
+  const token = jwt.createToken(req.hostname, req.user);
+  res.status(200).send(token);
 });
 
 // ------------------------------------------------
 
-app.post('/login', passport.authenticate('local'), (req, res) => {
+app.post('/login', passport.authenticate('local-login'), (req, res) => {
   const token = jwt.createToken(req.hostname, req.user);
   res.status(200).send(token);
 });
