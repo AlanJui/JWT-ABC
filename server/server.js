@@ -30,16 +30,23 @@ const stragegyOptions = {
 
 const registerStrategy = new LocalStrategy(stragegyOptions,
   function (email, password, done) {
-    let newUser = new User({
-      email: email,
-      password: password
+
+    User.findOne({ email: email }, (err, user) => {
+      if (err) { return done(err); }
+      if (user) { return done(err); }
+
+      let newUser = new User({
+        email: email,
+        password: password
+      });
+
+      newUser.save((err) => {
+        if (err) { done(err); }
+
+        done(null, newUser);
+      });
     });
 
-    newUser.save((err) => {
-      if (err) { done(err); }
-
-      done(null, newUser);
-    });
   }
 );
 
