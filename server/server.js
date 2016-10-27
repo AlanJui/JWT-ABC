@@ -46,14 +46,14 @@ app.post('/login', (req, res) => {
     if (err) throw err;
 
     if (!user) {
-      res.status(401).send({ message: 'Can not find this user' });
+      return res.status(401).send({ message: 'Can not find this user' });
     }
 
     user.comparePasswords(password, (err, isMatch) => {
       if (err) throw err;
 
       if (!isMatch) {
-        res.status(401).send({ message: 'Wrong email/password' });
+        return res.status(401).send({ message: 'Wrong email/password' });
       }
       const token = jwt.createToken(req.hostname, user);
       res.status(200).send(token);
