@@ -1,8 +1,10 @@
+const SECRET = 'shhh...';
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const jwt = require('./services/jwt');
+const jwt = require('jwt-simple');
 const User = require('./models/User');
 
 const app = express();
@@ -26,9 +28,11 @@ app.post('/register', (req, res) => {
     password: user.password
   });
 
-  const payload = jwt.createPayload(req.hostname, newUser.id);
-
-  const token = jwt.encode(payload);
+  const payload = {
+    iss: req.hostname,    // issuer
+    sub: newUser.id       // subject
+  };
+  const token = jwt.encode(payload, SECRET);
 
   newUser.save((err) => {
     if (err) { throw err };
@@ -59,7 +63,9 @@ app.get('/jobs', (req, res) => {
   }
 
   const token = req.headers.authorization.split(' ')[1];
-  if (!jwt.isValid(token)) {
+  const payload = jwt.decode(token, SECRET);
+
+  if (!payload.sub) {
     res.status(401).send({
       message: 'Authentication failed'
     });
