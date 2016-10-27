@@ -27,6 +27,13 @@ angular.module('jwtApp')
         controller: 'RegisterCtrl'
       })
 
+      .state('login', {
+        url: '/login',
+        templateUrl: '/views/login.html',
+        controller: 'LoginCtrl',
+        controllerAs: 'ctrl'
+      })
+
       .state('logout', {
         url: '/logout',
         controller: 'LogoutCtrl'

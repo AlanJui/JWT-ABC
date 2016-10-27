@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const jwt = require('jwt-simple');
+const jwt = require('./services/jwtTools');
 const User = require('./models/User');
 
 const app = express();
@@ -28,19 +28,35 @@ app.post('/register', (req, res) => {
     password: user.password
   });
 
-  const payload = {
-    iss: req.hostname,    // issuer
-    sub: newUser.id       // subject
-  };
-  const token = jwt.encode(payload, SECRET);
-
   newUser.save((err) => {
     if (err) { throw err };
 
-    // res.status(200).json(newUser);
-    res.status(200).send({
-      user: newUser.toJSON(),
-      token: token
+    const token = jwt.createToken(req.hostname, newUser);
+    res.status(200).send(token);
+  });
+});
+
+// ------------------------------------------------
+
+app.post('/login', (req, res) => {
+  const reqUser = req.body;
+  const password = reqUser.password;
+
+  User.findOne({ email: reqUser.email }, (err, user) => {
+    if (err) throw err;
+
+    if (!user) {
+      res.status(401).send({ message: 'Can not find this user' });
+    }
+
+    user.comparePasswords(password, (err, isMatch) => {
+      if (err) throw err;
+
+      if (!isMatch) {
+        res.status(401).send({ message: 'Wrong email/password' });
+      }
+      const token = jwt.createToken(req.hostname, user);
+      res.status(200).send(token);
     });
   });
 });
@@ -63,9 +79,7 @@ app.get('/jobs', (req, res) => {
   }
 
   const token = req.headers.authorization.split(' ')[1];
-  const payload = jwt.decode(token, SECRET);
-
-  if (!payload.sub) {
+  if (!jwt.isValid(token)) {
     res.status(401).send({
       message: 'Authentication failed'
     });
@@ -88,3 +102,7 @@ const server = app.listen(3000, function () {
 });
 
 // console.log(jwt.encode('hi', 'secret'));
+
+function createToken(user, res) {
+
+}
