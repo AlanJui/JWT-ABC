@@ -9,37 +9,43 @@
  */
 angular.module('jwtApp')
   .controller('LoginCtrl', function (auth, $auth, alert) {
+    var vm = this;
 
     function handleError(err) {
       alert('warning', 'Something went wrong :(', err.message);
     }
 
-    this.submit = function () {
+    vm.submit = function () {
 
-      auth.login(this.email, this.password)
-        .success(function (res) {
+      $auth.login({
+        email: vm.email,
+        password: vm.password
+      })
+        .then(function (res) {
           alert(
             'success',
             'Welcome!',
-            'Thanks for coming back ' + res.user.email + '!'
+            'Thanks for coming back ' + res.data.user.email + '!'
           );
         })
-        .error(handleError);
+        .catch(handleError);
     };
 
-    this.authenticate = function (provider) {
+    vm.authenticate = function (provider) {
 
       $auth.authenticate(provider)
         .then(function (response) {
           console.log(response);
           alert(
             'success',
+            'Welcome!',
             'Thanks for coming back ' + response.data.user.displayName + '!'
           );
-        }, handleError);
+        })
+        .catch(handleError);
     };
 
-    this.google = function () {
+    vm.google = function () {
 
       // console.log('run auth.googleAuth()!');
       auth.googleAuth()
@@ -47,9 +53,11 @@ angular.module('jwtApp')
           console.log(response);
           alert(
             'success',
+            'Welcome!',
             'Thanks for coming back ' + response.data.user.displayName + '!'
           );
-        }, handleError);
+        })
+        .catch(handleError);
     };
 
   });
