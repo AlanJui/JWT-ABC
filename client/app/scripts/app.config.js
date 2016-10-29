@@ -4,7 +4,7 @@ angular.module('jwtApp')
 
   .constant('API_URL', 'http://localhost:3000/')
 
-  .config(function ($urlRouterProvider, $stateProvider, $httpProvider) {
+  .config(function ($urlRouterProvider, $stateProvider) {
 
     $urlRouterProvider.otherwise('/');
 
@@ -39,8 +39,17 @@ angular.module('jwtApp')
         controller: 'LogoutCtrl'
       });
 
-    $httpProvider.interceptors.push('authInterceptor');
+  })
 
+  .config(function ($httpProvider) {
+    $httpProvider.interceptors.push('authInterceptor');
+  })
+
+  .config(function ($authProvider, API_URL) {
+    $authProvider.google({
+      clientId: '121521559049-pfd0m1ap65ue7fkfutsosvo3qqe7152n.apps.googleusercontent.com',
+      url: API_URL + 'auth/google'
+    });
   })
 
   .run(function ($window) {

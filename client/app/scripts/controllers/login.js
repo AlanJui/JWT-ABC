@@ -8,7 +8,7 @@
  * Controller of the jwtApp
  */
 angular.module('jwtApp')
-  .controller('LoginCtrl', function (auth, alert) {
+  .controller('LoginCtrl', function (auth, $auth, alert) {
 
     function handleError(err) {
       alert('warning', 'Something went wrong :(', err.message);
@@ -25,6 +25,18 @@ angular.module('jwtApp')
           );
         })
         .error(handleError);
+    };
+
+    this.authenticate = function (provider) {
+
+      $auth.authenticate(provider)
+        .then(function (response) {
+          console.log(response);
+          alert(
+            'success',
+            'Thanks for coming back ' + response.data.user.displayName + '!'
+          );
+        }, handleError);
     };
 
     this.google = function () {

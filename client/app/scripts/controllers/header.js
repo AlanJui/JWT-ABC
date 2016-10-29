@@ -8,13 +8,11 @@
  * Controller of the jwtApp
  */
 angular.module('jwtApp')
-  .controller('HeaderCtrl', function ($scope, authToken) {
+  .controller('HeaderCtrl', function ($auth) {
+    var vm = this;
 
-    // $scope.isAuthenticated = authToken.isAuthenticated();
-
-    $scope.isAuthenticated = function () {
-      return authToken.isAuthenticated();
+    vm.isAuthenticated = function () {
+      return $auth.isAuthenticated();
     };
-
 
   });

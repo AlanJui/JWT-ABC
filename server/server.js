@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const jwt = require('./services/jwtTools');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+
 const User = require('./models/User');
 
 // OAuth client

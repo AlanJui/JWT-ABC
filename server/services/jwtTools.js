@@ -1,12 +1,14 @@
+const SECRET = 'shhh..';
+
 const jwt = require('jwt-simple');
 const crypto = require('crypto');
-
-const SECRET = 'shhh..';
+const moment = require('moment');
 
 exports.createPayload = function (hostName, userID) {
   return {
     issuer: hostName,
-    subject: userID
+    subject: userID,
+    expired: moment().add(10, 'days').unix()
   };
 };
 

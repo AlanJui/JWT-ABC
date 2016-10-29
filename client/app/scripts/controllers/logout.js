@@ -8,7 +8,7 @@
  * Controller of the jwtApp
  */
 angular.module('jwtApp')
-  .controller('LogoutCtrl', function (authToken, $state) {
-    authToken.removeToken();
+  .controller('LogoutCtrl', function ($auth, $state) {
+    $auth.logout();
     $state.go('main');
   });
