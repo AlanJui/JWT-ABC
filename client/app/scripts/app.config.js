@@ -41,4 +41,18 @@ angular.module('jwtApp')
 
     $httpProvider.interceptors.push('authInterceptor');
 
+  })
+
+  .run(function ($window) {
+
+    var params = $window.location.search.substring(1);
+    console.log(params);
+
+    if (params && window.opener.location.origin === $window.location.origin) {
+      var pair = params.split('=');
+      var code = decodeURIComponent(pair[1]);
+
+      // get Authorization code from Google API and pass it by event message
+      $window.opener.postMessage(code, $window.location.origin);
+    }
   });

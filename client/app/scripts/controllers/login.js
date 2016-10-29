@@ -10,6 +10,10 @@
 angular.module('jwtApp')
   .controller('LoginCtrl', function (auth, alert) {
 
+    function handleError(err) {
+      alert('warning', 'Something went wrong :(', err.message);
+    }
+
     this.submit = function () {
 
       auth.login(this.email, this.password)
@@ -20,9 +24,21 @@ angular.module('jwtApp')
             'Thanks for coming back ' + res.user.email + '!'
           );
         })
-        .error(function (err) {
-          alert('warning', 'Something went wrong :(', err.message);
-        });
+        .error(handleError);
+    };
+
+    this.google = function () {
+
+      // console.log('run auth.googleAuth()!');
+      auth.googleAuth()
+        .then(function (response) {
+          console.log(response);
+          alert(
+            'success',
+            'Thanks for coming back ' + response.data.user.displayName + '!'
+          );
+        }, handleError);
     };
 
   });
+
