@@ -54,6 +54,11 @@ angular.module('jwtApp')
       clientId: '121521559049-pfd0m1ap65ue7fkfutsosvo3qqe7152n.apps.googleusercontent.com',
       url: API_URL + 'auth/google'
     });
+
+    $authProvider.facebook({
+      clientId: '666265470203007',
+      url: API_URL + 'auth/facebook'
+    });
   })
 
   .run(function ($window) {
