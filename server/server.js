@@ -8,6 +8,7 @@ const passport = require('passport');
 const LocalStrategy = require('./services/localStrategy');
 const googleAuth = require('./services/googleAuth');
 const facebookAuth = require('./services/facebookAuth');
+const emailVerification = require('./services/emailVerification');
 
 const jobs = require('./services/jobs');
 
@@ -45,9 +46,17 @@ app.post('/auth/google', googleAuth);
  * Local
  */
 app.post('/register', passport.authenticate('local-register'), (req, res) => {
+  emailVerification.send(req.user.email, function (err, result) {
+    if (err) { return res.status(500).send(err); }
+
+    console.log(result.response);
+  });
+
   const token = jwt.createToken(req.hostname, req.user);
   res.status(200).send(token);
 });
+
+app.get('/auth/verifyEmail', emailVerification.handler);
 
 app.post('/login', passport.authenticate('local-login'), (req, res) => {
   const token = jwt.createToken(req.hostname, req.user);

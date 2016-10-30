@@ -4,9 +4,10 @@ const bcrypt = require('bcrypt-nodejs');
 const UserSchema = new mongoose.Schema({
   email: String,
   password: String,
+  displayName: String,
   googleID: String,
   facebookID: String,
-  displayName: String
+  active: Boolean
 });
 
 UserSchema.methods.toJSON = function () {

@@ -14,10 +14,13 @@ angular.module('jwtApp')
 
       auth.register($scope.email, $scope.password)
         .success(function (res) {
+          var message = 'Wlcome, ' + res.user.email + '!'
+                      + 'Please activate your account in the next 2 days.'
+
           alert(
             'success',
             'Account Created!',
-            'Wlcome, ' + res.user.email + '!'
+            message
           );
         })
         .error(function (err) {

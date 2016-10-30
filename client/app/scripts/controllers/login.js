@@ -22,10 +22,15 @@ angular.module('jwtApp')
         password: vm.password
       })
         .then(function (res) {
+          var message = 'Thanks for coming back ' + res.data.user.email + '!';
+          if (!res.data.user.active) {
+            message = 'Just a reminder, please activate your account soon :)!';
+          }
+
           alert(
             'success',
             'Welcome!',
-            'Thanks for coming back ' + res.data.user.email + '!'
+            message
           );
         })
         .catch(handleError);

@@ -29,3 +29,11 @@ exports.isValid = function (token) {
   return payload.subject;
 };
 
+exports.encode = function (payload, secret) {
+  const token = jwt.encode(payload, secret);
+  return token;
+};
+
+exports.decode = function (token, secret) {
+  return jwt.decode(token, secret);
+};
